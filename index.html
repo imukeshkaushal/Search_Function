@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotstar</title>
+    <style>
+      input {
+        width: 404px;
+        height: 50px;
+        border: 2px solid black;
+        font-size: 18px;
+        font-family: sans-serif;
+        padding-left: 5%;
+      }
+      #movies {
+        height: 400px;
+        width: 400px;
+        border: 2px solid black;
+        border-top: none;
+        overflow: scroll;
+      }
+      #container {
+        width: 15%;
+        margin: auto;
+        margin-top: 7%;
+      }
+      .title {
+        font-family: sans-serif;
+        font-size: 20px;
+        padding-left: 5%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <!-- <input oninput="searchMovie()" type="search" id="query"/> -->
+
+      <!-- <input oninput="main()" type="search" id="query" /> -->
+
+      <input oninput="debounce(main,1000)" type="search" id="query" />
+
+      <div id="movies"></div>
+    </div>
+  </body>
+</html>
+<script>
+    let timerid;
+
+  let movies = document.querySelector("#movies");
+
+  async function searchMovie() {
+    try {
+      let input = document.querySelector("#query").value;
+
+      // console.log(input);
+
+      // 925db9a8
+
+      let res = await fetch(
+        `http://www.omdbapi.com/?apikey=925db9a8&s=${input}`
+      );
+
+      let data = await res.json();
+
+      let arrMovies = data.Search;
+
+      return arrMovies;
+
+      //appendmovies(arrMovies);
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function appendmovies(data) {
+    movies.innerHTML = null;
+    // Optimization
+    // if(data===undefined){
+    //     return false;
+    // } ---> Data Will Going to the main function
+
+    data.forEach(function (elem) {
+      let title = document.createElement("p");
+      title.innerText = elem.Title;
+      title.setAttribute("class", "title");
+
+      movies.append(title);
+    });
+  }
+
+  async function main() {
+    try {
+      let data = await searchMovie();
+
+      if (data === undefined) {
+        return false;
+      }
+
+      console.log(data);
+
+      appendmovies(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function debounce(func,delay){
+    // timerid = 2
+
+    if(timerid) {
+        clearTimeout(timerid);
+    }
+
+    timerid = setTimeout(function(){
+        // console.log(timerid)
+        func();
+    },delay)
+  }
+
+</script>
